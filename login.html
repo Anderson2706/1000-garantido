@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | 1000 GARANTIDO</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+
+<div class="max-w-md w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100">
+<div class="p-12">
+
+<div class="text-center mb-10">
+<img src="https://i.ibb.co/Kjj1ZXnZ/256-F2160-EF13-4383-8252-685-E58480-CD8.png" class="w-20 mx-auto mb-6">
+<h2 class="text-3xl font-black text-[#002D62]">Bem-vindo de volta</h2>
+<p class="text-slate-400 font-medium text-sm mt-2">Acesse sua conta</p>
+</div>
+
+<!-- GOOGLE -->
+<button id="google-login" class="w-full py-4 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-600 hover:bg-slate-50 transition mb-8">
+<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-5">
+Entrar com Google
+</button>
+
+<!-- FORM -->
+<form id="form-login" class="space-y-5">
+
+<input type="email" id="email" required placeholder="Email"
+class="w-full px-6 py-4 bg-slate-50 rounded-2xl outline-none">
+
+<input type="password" id="senha" required placeholder="Senha"
+class="w-full px-6 py-4 bg-slate-50 rounded-2xl outline-none">
+
+<button type="submit"
+class="w-full py-5 bg-[#002D62] text-white rounded-2xl font-black">
+Entrar
+</button>
+
+</form>
+
+<p class="text-center mt-8 text-sm">
+<a href="cadastro.html">Criar conta</a>
+</p>
+
+</div>
+</div>
+
+<script type="module">
+
+// 🔥 FIREBASE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider, 
+  signInWithPopup,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+// SUA CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyAdoeHbC0gV_lQ3LL4vckvGVGv8zh9vpqM",
+  authDomain: "garantido-84cb7.firebaseapp.com",
+  projectId: "garantido-84cb7",
+  storageBucket: "garantido-84cb7.firebasestorage.app",
+  messagingSenderId: "97063697865",
+  appId: "1:97063697865:web:2cb83e0aefc6815600bc18"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+
+// 🔐 LOGIN GOOGLE
+document.getElementById("google-login").addEventListener("click", () => {
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
+
+
+// 🔐 LOGIN EMAIL
+document.getElementById("form-login").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  signInWithEmailAndPassword(auth, email, senha)
+    .then(() => {
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
+
+
+// 🔁 MANTER LOGADO
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    window.location.href = "dashboard.html";
+  }
+});
+
+</script>
+
+</body>
+</html>

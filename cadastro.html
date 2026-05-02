@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | 1000 GARANTIDO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+
+    <div class="max-w-md w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100">
+        <div class="p-10">
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <img src="https://i.ibb.co/Kjj1ZXnZ/256-F2160-EF13-4383-8252-685-E58480-CD8.png" class="w-24 mx-auto mb-6" alt="Logo">
+                <h2 class="text-3xl font-black text-[#002D62]">Comece sua jornada</h2>
+                <p class="text-emerald-500 font-bold text-sm mt-2 flex items-center justify-center gap-2">
+                    <i data-lucide="gift" size="16"></i> Ganhe 1 correção gratuita ao criar conta
+                </p>
+            </div>
+
+            <!-- Social Login -->
+            <button class="w-full py-4 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-600 hover:bg-slate-50 transition mb-8">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-5">
+                Entrar com Google
+            </button>
+
+            <div class="relative mb-8 text-center">
+                <span class="bg-white px-4 text-[10px] font-black text-slate-300 uppercase relative z-10">Ou use seu e-mail</span>
+                <hr class="absolute top-1/2 w-full border-slate-100">
+            </div>
+
+            <!-- Form -->
+            <form id="form-cadastro" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-4">Nome Completo</label>
+                    <input type="text" id="nome" required class="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-[#002D62] outline-none transition font-medium" placeholder="Ex: João Silva">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-4">E-mail</label>
+                    <input type="email" id="email" required class="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-[#002D62] outline-none transition font-medium" placeholder="seu@email.com">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-4">Série (Opcional)</label>
+                        <select id="serie" class="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-[#002D62] outline-none transition font-medium">
+                            <option value="">Selecione</option>
+                            <option value="1">1º Ano</option>
+                            <option value="2">2º Ano</option>
+                            <option value="3">3º Ano</option>
+                            <option value="Cursinho">Cursinho</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-4">Senha</label>
+                        <input type="password" id="senha" required class="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-[#002D62] outline-none transition font-medium" placeholder="••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-5 bg-[#002D62] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition shadow-xl shadow-blue-900/20 mt-6">
+                    Criar conta grátis
+                </button>
+            </form>
+
+            <p class="text-center mt-8 text-sm font-medium text-slate-500">
+                Já tem uma conta? <a href="login.html" class="text-[#002D62] font-black">Entrar</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        document.getElementById('form-cadastro').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                serie: document.getElementById('serie').value,
+                senha: document.getElementById('senha').value,
+                plano: 'FREE',
+                corricoes_restantes: 1, // Crédito grátis garantido
+                historico: []
+            };
+            localStorage.setItem('user_logado', JSON.stringify(dados));
+            localStorage.setItem('user_data', JSON.stringify(dados)); // Inicia a IA
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

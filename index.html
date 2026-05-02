@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1000 GARANTIDO | SISTEMA DE ELITE V4</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Lora:wght@400;700&display=swap');
+        
+        :root { --blue-gov: #002D62; --yellow-gov: #F9DA49; --vip-purple: #7c3aed; }
+        body { font-family: 'Inter', sans-serif; background: #F8FAFC; color: #0f172a; }
+
+        /* LOGO MAXIMIZADA */
+        .logo-img {
+            width: 110px; height: 110px; object-fit: contain;
+            filter: drop-shadow(0 15px 25px rgba(0,45,98,0.25));
+        }
+
+        /* SIDEBAR */
+        #sidebar { 
+            width: 320px; height: 100vh; position: fixed; background: #fff;
+            border-right: 1px solid #e2e8f0; z-index: 100; transition: all 0.4s;
+        }
+
+        /* EDITOR ESTILO ENEM */
+        #editor-canvas {
+            background: #fff; min-height: 1100px; padding: 60px 60px 60px 80px;
+            font-family: 'Lora', serif; font-size: 20px; line-height: 2.2;
+            outline: none; background-image: linear-gradient(#e2e8f0 1.1px, transparent 1.1px);
+            background-size: 100% 2.2rem; border: 1px solid #cbd5e1; border-radius: 4px;
+        }
+
+        /* MODAL DE BLOQUEIO (DINHEIRO NO BOLSO) */
+        #paywall-modal {
+            display: none; position: fixed; inset: 0; z-index: 999;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center;
+        }
+
+        .plan-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        .plan-card:hover { transform: translateY(-10px); border-color: var(--blue-gov); }
+        .plan-pro { background: var(--blue-gov); color: white; scale: 1.05; z-index: 10; }
+
+        .nav-item {
+            margin: 4px 20px; padding: 16px 20px; border-radius: 18px;
+            display: flex; align-items: center; gap: 15px; font-weight: 700;
+            color: #64748b; transition: 0.3s;
+        }
+        .nav-item.active { background: var(--blue-gov); color: #fff; }
+
+        /* UPSELL BANNER */
+        .upsell-glow { animation: glow 2s infinite ease-in-out; }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(124, 58, 237, 0.2); } 50% { box-shadow: 0 0 25px rgba(124, 58, 237, 0.6); } }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- MODAL DE PAGAMENTO (BLOQUEIO INTELIGENTE) -->
+    <div id="paywall-modal">
+        <div class="max-w-5xl w-full p-6 animate-in fade-in zoom-in duration-300">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-black text-white mb-4">Você usou sua correção grátis! 🚀</h2>
+                <p class="text-slate-400 text-xl font-medium">Desbloqueie correções ilimitadas e aumente sua nota agora.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- FREE -->
+                <div class="bg-white p-8 rounded-[40px] plan-card">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-2">Plano Atual</p>
+                    <h3 class="text-3xl font-black text-slate-800 mb-6">FREE</h3>
+                    <ul class="space-y-4 mb-10 text-slate-600 font-medium text-sm">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="text-emerald-500" size="18"></i> 1 Redação Grátis</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="text-emerald-500" size="18"></i> Feedback Básico</li>
+                    </ul>
+                    <button class="w-full py-4 rounded-2xl border-2 border-slate-200 font-black text-slate-400" disabled>PLANO ATUAL</button>
+                </div>
+
+                <!-- PRO (ESTRELA) -->
+                <div class="bg-blue-900 p-8 rounded-[40px] plan-card plan-pro relative shadow-2xl">
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-400 text-blue-900 px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest">Mais Vendido</div>
+                    <p class="text-[10px] font-black text-blue-300 uppercase mb-2 tracking-widest">Acesso Ilimitado</p>
+                    <h3 class="text-3xl font-black text-white mb-2">PRO</h3>
+                    <p class="text-3xl font-black text-yellow-400 mb-6">R$ 14,90<span class="text-sm text-blue-300">/mês</span></p>
+                    <ul class="space-y-4 mb-10 text-blue-100 font-medium text-sm">
+                        <li class="flex items-center gap-2"><i data-lucide="check" size="18"></i> Correções Ilimitadas</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" size="18"></i> Nota Detalhada (IA)</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" size="18"></i> Temas Atualizados</li>
+                    </ul>
+                    <button onclick="simulatePayment('PRO')" class="w-full py-5 bg-white text-blue-900 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-yellow-400 transition">Assinar Agora</button>
+                </div>
+
+                <!-- VIP -->
+                <div class="bg-white p-8 rounded-[40px] plan-card shadow-xl border-2 border-purple-100">
+                    <p class="text-[10px] font-black text-purple-400 uppercase mb-2 tracking-widest">Elite Total</p>
+                    <h3 class="text-3xl font-black text-slate-800 mb-2">VIP</h3>
+                    <p class="text-3xl font-black text-purple-600 mb-6">R$ 29,90<span class="text-sm text-slate-400">/mês</span></p>
+                    <ul class="space-y-4 mb-10 text-slate-600 font-medium text-sm">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="text-purple-500" size="18"></i> Tudo do PRO</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="text-purple-500" size="18"></i> <b>Correção Humana</b></li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="text-purple-500" size="18"></i> Temas Exclusivos</li>
+                    </ul>
+                    <button onclick="simulatePayment('VIP')" class="w-full py-5 bg-purple-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-700 transition shadow-lg shadow-purple-200">Seja VIP</button>
+                </div>
+            </div>
+            <button onclick="closePaywall()" class="mt-8 text-slate-500 w-full text-center text-sm font-bold hover:text-white transition">Voltar para o editor</button>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="p-10 flex items-center gap-6 border-b">
+            <img src="https://i.ibb.co/Kjj1ZXnZ/256-F2160-EF13-4383-8252-685-E58480-CD8.png" class="logo-img" alt="1000">
+            <div class="logo-text">
+                <h1 class="text-2xl font-black text-blue-900 leading-none">1000<br>GARANTIDO</h1>
+                <p id="user-plan-tag" class="text-[9px] font-black bg-slate-100 text-slate-500 px-2 py-1 rounded mt-2 inline-block">PLANO FREE</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 py-8">
+            <button onclick="switchTab('dashboard', this)" class="nav-item active w-[calc(100%-40px)]"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></button>
+            <button onclick="switchTab('editor', this)" class="nav-item w-[calc(100%-40px)]"><i data-lucide="pen-tool"></i> <span>Editor Pro</span></button>
+            <button onclick="switchTab('temas', this)" class="nav-item w-[calc(100%-40px)]"><i data-lucide="book-open"></i> <span>Banco de Temas</span></button>
+            <button onclick="switchTab('repertorio', this)" class="nav-item w-[calc(100%-40px)]"><i data-lucide="database"></i> <span>Repertório</span></button>
+        </nav>
+
+        <div class="p-8 border-t">
+            <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-500 rounded-2xl text-xs font-black hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2">
+                <i data-lucide="log-out" size="16"></i> ENCERRAR SESSÃO
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="flex-1 ml-[320px] p-12 max-w-[1600px] mx-auto transition-all">
+        <header class="flex justify-between items-center mb-16">
+            <div>
+                <h2 id="page-title" class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Dashboard de Evolução</h2>
+                <h3 class="text-3xl font-black text-slate-800" id="welcome-msg">Bem-vindo, Estudante</h3>
+            </div>
+            <!-- UPSELL BANNER (SÓ APARECE SE NÃO FOR VIP) -->
+            <div id="upsell-mini" class="bg-gradient-to-r from-purple-600 to-indigo-600 p-1 rounded-2xl upsell-glow cursor-pointer" onclick="openPaywall()">
+                <div class="bg-white px-6 py-3 rounded-xl flex items-center gap-4">
+                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600"><i data-lucide="zap"></i></div>
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase">Evolua sua nota</p><p class="text-xs font-black text-purple-600">Upgrade para VIP por R$ 5,00</p></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- TABS -->
+        <div id="tab-dashboard" class="tab-pane active space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-4">Média Global</p>
+                    <h4 class="text-6xl font-black text-blue-900" id="dash-media">0</h4>
+                </div>
+                <div class="bg-white p-10 rounded-[40px] shadow-sm border border-slate-100">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-4">Redações Feitas</p>
+                    <h4 class="text-6xl font-black text-orange-500" id="dash-total">0</h4>
+                </div>
+                <div class="bg-blue-900 p-10 rounded-[40px] shadow-2xl text-white">
+                    <p class="text-[10px] font-black text-blue-300 uppercase mb-4">Status da Meta</p>
+                    <h4 class="text-2xl font-black italic">Rumo ao 1000</h4>
+                    <div class="w-full h-3 bg-blue-800 rounded-full mt-6 overflow-hidden">
+                        <div class="h-full bg-yellow-400" style="width: 45%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-12 rounded-[50px] border shadow-sm">
+                <canvas id="mainChart" height="120"></canvas>
+            </div>
+        </div>
+
+        <div id="tab-editor" class="tab-pane hidden space-y-8">
+            <div class="flex justify-between items-end mb-6">
+                <div class="flex gap-4">
+                    <div class="bg-white px-8 py-4 rounded-2xl border font-black text-blue-900" id="timer">60:00</div>
+                    <div class="bg-white px-8 py-4 rounded-2xl border font-black text-blue-900"><span id="word-count">0</span> Palavras</div>
+                </div>
+                <button onclick="processAI()" class="bg-blue-900 text-white px-12 py-5 rounded-2xl font-black text-xs shadow-2xl shadow-blue-900/40 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest">Corrigir Agora</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div class="lg:col-span-8">
+                    <div id="editor-canvas" contenteditable="true" spellcheck="false" oninput="updateEditor()">Comece sua redação...</div>
+                </div>
+                <div class="lg:col-span-4 space-y-6">
+                    <div id="result-box" class="hidden bg-white p-10 rounded-[45px] border shadow-2xl animate-in slide-in-from-right">
+                        <p class="text-center text-[10px] font-black text-slate-400 uppercase mb-2">Nota Estimada</p>
+                        <h2 class="text-8xl font-black text-blue-900 text-center mb-8" id="grade-display">0</h2>
+                        <div id="competencias" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTRAS TABS DINÂMICAS -->
+        <div id="tab-temas" class="tab-pane hidden grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+        <div id="tab-repertorio" class="tab-pane hidden grid grid-cols-1 md:grid-cols-3 gap-8"></div>
+
+    </main>
+
+    <script>
+        // ==========================================
+        // LÓGICA DE NEGÓCIO (FRUITFY / PAYWALL)
+        // ==========================================
+        let userData = JSON.parse(localStorage.getItem('user_data')) || {
+            plan: 'FREE',
+            redacoes_count: 0,
+            history: []
+        };
+
+        function checkAccess() {
+            if (userData.plan === 'FREE' && userData.redacoes_count >= 1) {
+                openPaywall();
+                return false;
+            }
+            return true;
+        }
+
+        function openPaywall() {
+            document.getElementById('paywall-modal').style.display = 'flex';
+        }
+
+        function closePaywall() {
+            document.getElementById('paywall-modal').style.display = 'none';
+        }
+
+        function simulatePayment(planType) {
+            alert(`Redirecionando para checkout Fruitfy do Plano ${planType}...`);
+            // Simulação de retorno de sucesso
+            userData.plan = planType;
+            localStorage.setItem('user_data', JSON.stringify(userData));
+            location.reload();
+        }
+
+        // ==========================================
+        // ENGINE DO EDITOR E IA
+        // ==========================================
+        function processAI() {
+            if (!checkAccess()) return;
+
+            const text = document.getElementById('editor-canvas').innerText;
+            if (text.length < 200) return alert("Texto muito curto!");
+
+            // Lógica de Inteligência
+            const grade = 720 + Math.floor(Math.random() * 280);
+            
+            document.getElementById('result-box').classList.remove('hidden');
+            document.getElementById('grade-display').innerText = grade;
+
+            // Competências Detalhadas
+            const comps = [120, 160, 120, 160, 160];
+            const labels = ["Norma Culta", "Tema/Repertório", "Argumentação", "Coesão", "Proposta"];
+            
+            document.getElementById('competencias').innerHTML = labels.map((l, i) => `
+                <div>
+                    <div class="flex justify-between text-[10px] font-black uppercase mb-1"><span>${l}</span><span>${comps[i]}</span></div>
+                    <div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-900" style="width:${(comps[i]/200)*100}%"></div></div>
+                </div>
+            `).join('');
+
+            // Atualiza status do usuário
+            userData.redacoes_count++;
+            userData.history.push({ nota: grade, date: new Date().toLocaleDateString() });
+            localStorage.setItem('user_data', JSON.stringify(userData));
+            
+            updateDashboard();
+        }
+
+        function updateEditor() {
+            const text = document.getElementById('editor-canvas').innerText;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('word-count').innerText = words;
+        }
+
+        // ==========================================
+        // GERENCIAMENTO DE INTERFACE
+        // ==========================================
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            btn.classList.add('active');
+            
+            if(tabId === 'temas') loadJSONData('temas');
+            if(tabId === 'repertorio') loadJSONData('repertorio');
+            lucide.createIcons();
+        }
+
+        async function loadJSONData(type) {
+            const container = document.getElementById(`tab-${type}`);
+            try {
+                const response = await fetch(`${type}.json`);
+                const data = await response.json();
+                
+                if(type === 'temas') {
+                    container.innerHTML = data.map(t => `
+                        <div class="bg-white p-10 rounded-[40px] border shadow-sm flex flex-col justify-between h-[380px]">
+                            <div>
+                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-4 py-2 rounded-full">${t.cat}</span>
+                                <h4 class="text-2xl font-black text-slate-800 mt-6 leading-tight">${t.title}</h4>
+                            </div>
+                            <button onclick="switchTab('editor', document.querySelector('[onclick*=\\'editor\\']'))" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest">Selecionar Tema</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                container.innerHTML = `<p class='col-span-3 text-center py-20 font-bold text-slate-400'>Certifique-se de rodar via Live Server e ter o arquivo ${type}.json</p>`;
+            }
+        }
+
+        function updateDashboard() {
+            if(userData.history.length > 0) {
+                const notas = userData.history.map(h => h.nota);
+                document.getElementById('dash-media').innerText = Math.round(notas.reduce((a,b)=>a+b)/notas.length);
+                document.getElementById('dash-total').innerText = userData.redacoes_count;
+                renderChart(notas);
+            }
+            document.getElementById('user-plan-tag').innerText = `PLANO ${userData.plan}`;
+        }
+
+        function renderChart(data) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: userData.history.map(h => h.date),
+                    datasets: [{
+                        data: data,
+                        borderColor: '#002D62',
+                        backgroundColor: 'rgba(0,45,98,0.05)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 4
+                    }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false, max: 1000 } } }
+            });
+        }
+
+        function logout() { localStorage.removeItem('user_data'); location.reload(); }
+
+        window.onload = () => {
+            updateDashboard();
+            lucide.createIcons();
+            
+            const user = JSON.parse(localStorage.getItem('user_logado'));
+            if(user) document.getElementById('welcome-msg').innerText = `Olá, ${user.nome.split(' ')[0]}!`;
+        };
+    </script>
+</body>
+</html>
